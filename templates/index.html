@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ site_name }}</title>
+</head>
+
+<body>
+    <h1>{{ site_name }}</h1>
+    <p>Cook one problem at a time.</p>
+
+    <nav>
+        <a href="./">By Topic</a>
+        <span>By Company — Coming soon</span>
+        <span>OA Journal — Coming soon</span>
+    </nav>
+    <main>
+        <h2> Study by Topic</h2>
+        <p>Total problems: {{ total_problems }}</p>
+        <ul>
+            {% for topic in topics %}
+            <li>
+                <a href="./topics/{{ topic.id }}.html">{{ topic.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+
+</html>

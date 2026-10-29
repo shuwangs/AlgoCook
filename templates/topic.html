@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ topic.title_en }} · AlgoCook</title>
+</head>
+
+<body>
+    <a href="../index.html">← All topics</a>
+    <h1>{{ topic.title_en }}</h1>
+
+    {% for section in topic.sections if section.problems %}
+    <section>
+        <h2>{{ section.title_en or "Practice set " ~ loop.index }}</h2>
+
+        <ul>
+            {% for entry in section.problems %}
+            {% set problem = problems[entry.slug] %}
+            <li>
+                <a href="{{ problem.url_en }}" target="_blank" rel="noopener">
+                    {{ problem.id or "" }}
+                    {{ problem.title_en or "Untitled problem" }}
+                </a>
+                {% if problem.difficulty %}
+                — {{ problem.difficulty }}
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endfor %}
+</body>
+
+</html>
