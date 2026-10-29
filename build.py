@@ -1,4 +1,5 @@
 import json
+import shutil
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -57,7 +58,12 @@ output.mkdir(exist_ok=True)
 print("Built dist/index.html")
 
 
-# FOr each topic, generate a page with the list of problems and their details
+shutil.copytree(
+    ROOT / "assets",
+    output / "assets",
+    dirs_exist_ok=True,
+)
 
+print("Copied assets")
 
 

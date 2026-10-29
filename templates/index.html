@@ -4,29 +4,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./assets/style.css">
     <title>{{ site_name }}</title>
 </head>
 
 <body>
-    <h1>{{ site_name }}</h1>
-    <p>Cook one problem at a time.</p>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <a class="brand" href="./index.html">
+                <span class="brand-mark">a.</span>
+                {{ site_name }}
+            </a>
 
-    <nav>
-        <a href="./">By Topic</a>
-        <span>By Company — Coming soon</span>
-        <span>OA Journal — Coming soon</span>
-    </nav>
-    <main>
-        <h2> Study by Topic</h2>
-        <p>Total problems: {{ total_problems }}</p>
-        <ul>
-            {% for topic in topics %}
-            <li>
-                <a href="./topics/{{ topic.id }}.html">{{ topic.name }}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </main>
+            <p class="nav-label">YOUR STUDY SPACE</p>
+
+            <nav class="main-nav" aria-label="Main navigation">
+                <a class="nav-item active" href="./index.html" aria-current="page">
+                    By Topic
+                </a>
+                <span class="nav-item unavailable">
+                    By Company <small>Coming soon</small>
+                </span>
+                <span class="nav-item unavailable">
+                    OA Journal <small>Coming soon</small>
+                </span>
+            </nav>
+
+            <p class="sidebar-footer">Cook one problem at a time.</p>
+        </aside>
+
+        <main class="main-content">
+            <header class="page-header">
+                Study space / <strong>By Topic</strong>
+            </header>
+
+            <section class="hero">
+                <p class="eyebrow">A LITTLE PRACTICE. A LOT MORE FAMILIAR.</p>
+                <h1>Make the patterns stick.</h1>
+                <p class="hero-description">
+                    Algorithm problems organized so you can focus
+                    on one idea at a time.
+                </p>
+            </section>
+
+            <section aria-labelledby="topics-heading">
+                <div class="section-heading">
+                    <h2 id="topics-heading">Explore topics</h2>
+                    <span>
+                        {{ topics | length }} topics ·
+                        {{ total_problems }} unique problems
+                    </span>
+                </div>
+
+                <div class="topic-grid">
+                    {% for topic in topics %}
+                    <a class="topic-card" href="./topics/{{ topic.id }}.html">
+                        <span class="topic-number">{{ "%02d" | format(loop.index) }}</span>
+                        <h3>{{ topic.name }}</h3>
+                        <div class="topic-card-footer">
+                            <span>{{ topic.problem_count }} problems</span>
+                            <span aria-hidden="true">→</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+        </main>
+    </div>
 </body>
 
 </html>
