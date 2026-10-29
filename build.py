@@ -46,6 +46,11 @@ for topic in data["topics"]:
     topic_html = topic_template.render(
         topic=topic,
         problems=data["problems"],
+        topic_problem_count=len({
+            entry["slug"]
+            for section in topic["sections"]
+            for entry in section["problems"]
+        }),
     )
 
     page_path = topic_output / f"{topic['id']}.html"

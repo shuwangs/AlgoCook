@@ -5,33 +5,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../assets/style.css">
+    <script src="../assets/topic.js" defer></script>
     <title>{{ topic.title_en }} · AlgoCook</title>
 </head>
 
 <body>
-    <a href="../index.html">← All topics</a>
-    <h1>{{ topic.title_en }}</h1>
+    {% set sections = topic.sections | selectattr('problems') | list %}
+    <div class="app-layout">
+        <aside class="sidebar">
+            <a class="brand" href="../index.html">
+                <span class="brand-mark">a.</span>
+                AlgoCook
+            </a>
+            <p class="nav-label">YOUR STUDY SPACE</p>
+            <nav class="main-nav" aria-label="Main navigation">
+                <a class="nav-item active" href="../index.html">By Topic</a>
+                <span class="nav-item unavailable">By Company <small>Coming soon</small></span>
+                <span class="nav-item unavailable">OA Journal <small>Coming soon</small></span>
+            </nav>
+            <p class="sidebar-footer">Cook one problem at a time.</p>
+        </aside>
 
-    {% for section in topic.sections if section.problems %}
-    <section>
-        <h2>{{ section.title_en or "Practice set " ~ loop.index }}</h2>
+        <main class="main-content topic-content">
+            <header class="page-header topic-breadcrumb">
+                <a href="../index.html">By Topic</a>
+                <span aria-hidden="true">/</span>
+                <strong>{{ topic.title_en }}</strong>
+            </header>
 
-        <ul>
-            {% for entry in section.problems %}
-            {% set problem = problems[entry.slug] %}
-            <li>
-                <a href="{{ problem.url_en }}" target="_blank" rel="noopener">
-                    {{ problem.id or "" }}
-                    {{ problem.title_en or "Untitled problem" }}
-                </a>
-                {% if problem.difficulty %}
-                — {{ problem.difficulty }}
-                {% endif %}
-            </li>
+            <a class="back-link" href="../index.html">← All topics</a>
+            <section class="hero topic-hero">
+                <p class="eyebrow">ONE PATTERN AT A TIME</p>
+                <h1>{{ topic.title_en }}</h1>
+                <p class="hero-description">
+                    Build familiarity through focused practice. Follow the original
+                    study-list order, or find a problem to work on today.
+                </p>
+                <div class="topic-meta">
+                    <span>{{ topic_problem_count }} unique problems</span>
+                    <span>{{ sections | length }} practice sets</span>
+                    <a href="{{ topic.url }}" target="_blank" rel="noopener">Original study list ↗</a>
+                </div>
+            </section>
+
+            <div class="problem-toolbar" role="search" aria-label="Filter problems">
+                <label class="problem-search">
+                    <span class="visually-hidden">Search problem title or number</span>
+                    <input id="problem-search" type="search" placeholder="Search title or problem number…">
+                </label>
+                <label class="filter-field">
+                    <span>Difficulty</span>
+                    <select id="difficulty-filter">
+                        <option value="">All difficulties</option>
+                        <option>Easy</option>
+                        <option>Medium</option>
+                        <option>Hard</option>
+                    </select>
+                </label>
+                <label class="filter-field">
+                    <span>Practice set</span>
+                    <select id="section-jump">
+                        <option value="">Jump to a set</option>
+                        {% for section in sections %}
+                        <option value="practice-{{ loop.index }}">
+                            {{ section.title_en or "Practice set " ~ loop.index }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+
+            <div class="problem-list-heading">
+                <h2>Your practice collection</h2>
+                <p id="filter-status" role="status" aria-live="polite">{{ sections | length }} practice sets · Original order</p>
+            </div>
+            <p class="filter-empty" id="filter-empty" hidden>
+                No problems match your filters. Try another title, number, or difficulty.
+            </p>
+
+            {% for section in sections %}
+            <details class="practice-section" id="practice-{{ loop.index }}" open>
+                <summary>
+                    <span class="practice-heading" role="heading" aria-level="2">
+                        <span class="practice-number">{{ "%02d" | format(loop.index) }}</span>
+                        <span>{{ section.title_en or "Practice set " ~ loop.index }}</span>
+                    </span>
+                    <span class="practice-count">{{ section.problems | length }} {{ "problem" if section.problems | length == 1 else "problems" }}</span>
+                    <span class="practice-chevron" aria-hidden="true">⌄</span>
+                </summary>
+                <table class="problem-table">
+                    <caption class="visually-hidden">{{ section.title_en or "Practice set " ~ loop.index }} problems</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Problem</th>
+                            <th scope="col">Difficulty</th>
+                            <th scope="col" class="rating-column">Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in section.problems %}
+                        {% set problem = problems[entry.slug] %}
+                        <tr class="problem-row" data-difficulty="{{ problem.difficulty or '' }}">
+                            <td>
+                                <a class="problem-link" href="{{ problem.url_en }}" target="_blank" rel="noopener">
+                                    <span class="problem-id">{{ problem.id or "—" }}</span>
+                                    <span>{{ problem.title_en or "Untitled problem" }}</span>
+                                    <span class="problem-arrow" aria-hidden="true">↗</span>
+                                </a>
+                                {% if entry.premium_in_source or problem.paid_only %}
+                                <span class="premium-label">Premium</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if problem.difficulty %}
+                                <span class="difficulty-badge difficulty-{{ problem.difficulty | lower }}">{{ problem.difficulty }}</span>
+                                {% else %}
+                                <span class="difficulty-unknown">—</span>
+                                {% endif %}
+                            </td>
+                            <td class="rating-column problem-rating">{{ entry.rating or "—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </details>
             {% endfor %}
-        </ul>
-    </section>
-    {% endfor %}
+
+            <footer class="topic-footer">
+                <span>Study lists by Endlesscheng · Some section titles await translation.</span>
+                <a href="../index.html">Explore other topics →</a>
+            </footer>
+        </main>
+    </div>
 </body>
 
 </html>
